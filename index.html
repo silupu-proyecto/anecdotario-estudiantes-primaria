@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#01025d">
+<title>Anecdotario · Colegio Proyecto</title>
+<link rel="icon" href="logo.png">
+<style>
+  :root{
+    --azul:#01025d; --guinda:#86021d; --fondo:#f3f4f9; --tarjeta:#fff; --texto:#1b1c2b;
+    --suave:#6b6f86; --borde:#e2e4ee; --verde:#1e7d3a; --verde-bg:#e6f4ea;
+    --ambar:#a76200; --ambar-bg:#fff4dc; --rojo:#b3261e; --rojo-bg:#fce8e6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--fondo);color:var(--texto);
+    font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  button{font:inherit;cursor:pointer}
+  .oculto{display:none!important}
+
+  /* Login */
+  #login{position:fixed;inset:0;z-index:50;background:var(--fondo);display:flex;align-items:center;justify-content:center;padding:24px}
+  .caja-login{background:var(--tarjeta);border-radius:20px;padding:32px 24px;max-width:380px;width:100%;
+    text-align:center;box-shadow:0 10px 30px rgba(1,2,93,.10)}
+  .caja-login img{width:86px;height:86px;object-fit:contain}
+  .caja-login h1{margin:12px 0 4px;color:var(--azul);font-size:24px}
+  .caja-login p{margin:0 0 22px;color:var(--suave)}
+  #formLogin{display:flex;flex-direction:column;gap:10px;text-align:left}
+  #formLogin label{font-size:13px;font-weight:600;color:var(--azul)}
+  #formLogin input{width:100%;padding:12px;border:1px solid var(--borde);border-radius:10px;font:inherit}
+  #btnEntrar{margin-top:6px;background:var(--guinda);color:#fff;border:0;border-radius:12px;padding:13px;font-weight:700}
+  #btnEntrar:disabled{background:#c9cad6}
+  #msgLogin{margin-top:12px;color:var(--rojo);font-size:14px;min-height:1em}
+
+  /* Encabezado */
+  header{position:sticky;top:0;z-index:10;background:var(--azul);color:#fff;
+    padding:10px 16px;display:flex;align-items:center;gap:12px;
+    padding-top:max(10px,env(safe-area-inset-top))}
+  header img{width:36px;height:36px;object-fit:contain;background:#fff;border-radius:50%;padding:3px}
+  .quien{flex:1;min-width:0}
+  .quien b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .quien span{font-size:13px;opacity:.85}
+  #btnSalir{background:transparent;border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px}
+
+  main{max-width:760px;margin:0 auto;padding:14px 14px 120px}
+  .tarjeta{background:var(--tarjeta);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .tarjeta h2{margin:0 0 10px;font-size:15px;color:var(--azul);display:flex;align-items:center;gap:8px}
+  .num{background:var(--azul);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;
+    align-items:center;justify-content:center;font-size:12px}
+  .derecha{margin-left:auto;font-weight:400;font-size:13px}
+  .link{background:none;border:0;color:var(--guinda);padding:0;text-decoration:underline}
+
+  /* Secciones */
+  #secciones{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+  .chip{flex:0 0 auto;border:2px solid var(--borde);background:#fff;border-radius:999px;padding:8px 16px;font-weight:600;color:var(--azul)}
+  .chip.activo{background:var(--azul);border-color:var(--azul);color:#fff}
+
+  /* Alumnos */
+  #buscar{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:10px;margin-bottom:10px;font:inherit}
+  #alumnos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+  .alumno{text-align:left;border:2px solid var(--borde);background:#fff;border-radius:12px;padding:8px 10px;min-height:56px;position:relative}
+  .alumno b{display:block;font-size:13px;color:var(--azul);letter-spacing:.2px}
+  .alumno span{font-size:13px;color:var(--suave)}
+  .alumno.sel{border-color:var(--guinda);background:#fbeef1}
+  .alumno.sel::after{content:"✓";position:absolute;top:6px;right:8px;color:var(--guinda);font-weight:700}
+
+  /* Anotación */
+  .pestanas{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+  .pestana{border:2px solid var(--borde);background:#fff;border-radius:12px;padding:10px;font-weight:700}
+  .pestana.activo.logro{border-color:var(--verde);background:var(--verde-bg);color:var(--verde)}
+  .pestana.activo.mejorar{border-color:var(--guinda);background:#fbeef1;color:var(--guinda)}
+  .grupo{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;color:var(--suave)}
+  .opciones{display:flex;flex-wrap:wrap;gap:8px}
+  .opcion{border:2px solid var(--borde);background:#fff;border-radius:10px;padding:9px 12px;text-align:left;font-size:14px}
+  .opcion.Leve{border-left:6px solid #d6d8e3}
+  .opcion.Moderado{border-left:6px solid #f0b400}
+  .opcion.Grave{border-left:6px solid var(--rojo)}
+  .opcion.Logro{border-left:6px solid var(--verde)}
+  .opcion.sel{background:var(--azul);color:#fff;border-color:var(--azul)}
+  textarea{width:100%;margin-top:12px;border:1px solid var(--borde);border-radius:10px;padding:10px;font:inherit;resize:vertical;min-height:60px}
+
+  /* Hoy */
+  .registro{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--borde)}
+  .registro:first-child{border-top:0}
+  .punto{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:0 0 auto}
+  .registro .info{flex:1;font-size:14px}
+  .registro .info small{color:var(--suave)}
+  .borrar{background:none;border:0;color:var(--rojo);font-size:20px;line-height:1;padding:2px 6px}
+  .vacio{color:var(--suave);font-size:14px;margin:0}
+
+  /* Barra inferior */
+  #barra{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--borde);
+    padding:10px 14px max(10px,env(safe-area-inset-bottom));z-index:10}
+  #barra .dentro{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center}
+  #resumen{flex:1;font-size:13px;color:var(--suave);min-width:0}
+  #btnGuardar{background:var(--guinda);color:#fff;border:0;border-radius:12px;padding:13px 20px;font-weight:700;min-width:150px}
+  #btnGuardar:disabled{background:#c9cad6}
+
+  #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--texto);color:#fff;
+    padding:10px 16px;border-radius:10px;font-size:14px;z-index:60;max-width:90%;text-align:center}
+  #toast.error{background:var(--rojo)}
+  #cargando{text-align:center;color:var(--suave);padding:20px}
+</style>
+</head>
+<body>
+
+<!-- Pantalla de inicio de sesión -->
+<div id="login">
+  <div class="caja-login">
+    <img src="logo.png" alt="Logo del colegio">
+    <h1>Anecdotario</h1>
+    <p>Ingresa con tu correo del colegio</p>
+    <form id="formLogin" autocomplete="on">
+      <label for="correo">Correo</label>
+      <input id="correo" type="email" inputmode="email" autocomplete="username"
+             placeholder="usuario@colegioproyecto.com" required>
+      <label for="pin">PIN</label>
+      <input id="pin" type="password" inputmode="numeric" autocomplete="current-password"
+             maxlength="6" placeholder="Tu PIN de 4 dígitos">
+      <button id="btnEntrar" type="submit">Entrar</button>
+    </form>
+    <div id="msgLogin"></div>
+  </div>
+</div>
+
+<!-- Aplicación -->
+<div id="app" class="oculto">
+  <header>
+    <img src="logo.png" alt="">
+    <div class="quien"><b id="nombreDocente">—</b><span id="cursoDocente"></span></div>
+    <button id="btnSalir">Salir</button>
+  </header>
+
+  <main>
+    <div id="cargando">Cargando…</div>
+
+    <div id="contenido" class="oculto">
+      <section class="tarjeta" id="tarjetaSecciones">
+        <h2>Sección</h2>
+        <div id="secciones"></div>
+      </section>
+
+      <section class="tarjeta">
+        <h2><span class="num">1</span> Alumno(s)
+          <span class="derecha"><button class="link" id="btnLimpiar">Limpiar</button></span></h2>
+        <input id="buscar" type="search" placeholder="Buscar alumno…" autocomplete="off">
+        <div id="alumnos"></div>
+      </section>
+
+      <section class="tarjeta">
+        <h2><span class="num">2</span> Anotación</h2>
+        <div class="pestanas">
+          <button class="pestana mejorar activo" data-tipo="A mejorar">📌 A mejorar</button>
+          <button class="pestana logro" data-tipo="Logro">🌟 Logro</button>
+        </div>
+        <div id="opciones"></div>
+        <textarea id="nota" maxlength="500" placeholder="Nota (opcional)"></textarea>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Registrado hoy por ti <span class="derecha" id="seccionHoy"></span></h2>
+        <div id="hoy"><p class="vacio">Aún no hay registros.</p></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="barra">
+    <div class="dentro">
+      <div id="resumen">Elige alumno(s) y una anotación</div>
+      <button id="btnGuardar" disabled>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="oculto"></div>
+
+<script>
+/* 👉 Pega aquí la URL /exec de Apps Script */
+const API_URL = 'https://script.google.com/macros/s/AKfycbzTthNBLVRBpOpBu2AK5g6Iy5qrUFGtAM5md5DerDy6nAV4AZf4P3Gbjy44gWl-vZu6TA/exec';
+const DOMINIO = '@colegioproyecto.com';
+
+const $ = (id) => document.getElementById(id);
+const estado = {
+  token: null, docente: null, incidentes: [], seccion: null,
+  alumnos: [], seleccion: new Set(), tipo: 'A mejorar', incidente: null, guardando: false
+};
+
+/* ---------------- Sesión (correo + PIN) ---------------- */
+
+function guardarLocal(clave, valor) { try { localStorage.setItem(clave, valor); } catch (e) {} }
+function leerLocal(clave) { try { return localStorage.getItem(clave); } catch (e) { return null; } }
+function borrarLocal(clave) { try { localStorage.removeItem(clave); } catch (e) {} }
+
+$('formLogin').onsubmit = async (ev) => {
+  ev.preventDefault();
+  let correo = $('correo').value.trim().toLowerCase();
+  if (correo && !correo.includes('@')) correo += DOMINIO; // permite escribir solo "csilupu"
+  const pin = $('pin').value.trim();
+  $('msgLogin').textContent = '';
+  $('btnEntrar').disabled = true;
+  $('btnEntrar').textContent = 'Entrando…';
+  try {
+    const r = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ accion: 'entrar', correo, pin })
+    });
+    const res = await r.json();
+    if (!res.ok) throw new Error(res.mensaje || 'No se pudo ingresar');
+    estado.token = res.token;
+    guardarLocal('anec_token', res.token);
+    guardarLocal('anec_correo', correo);
+    $('pin').value = '';
+    $('login').classList.add('oculto');
+    if (!estado.docente) iniciar();
+  } catch (e) {
+    $('msgLogin').textContent = e.message === 'Failed to fetch' ? 'Sin conexión. Inténtalo de nuevo.' : e.message;
+  } finally {
+    $('btnEntrar').disabled = false;
+    $('btnEntrar').textContent = 'Entrar';
+  }
+};
+
+function pedirLogin(mensaje) {
+  estado.token = null;
+  borrarLocal('anec_token');
+  $('msgLogin').textContent = mensaje || '';
+  $('correo').value = leerLocal('anec_correo') || '';
+  $('login').classList.remove('oculto');
+}
+
+$('btnSalir').onclick = () => {
+  borrarLocal('anec_token');
+  borrarLocal('anec_seccion');
+  location.reload();
+};
+
+/* ---------------- API ---------------- */
+
+async function api(accion, datos) {
+  if (!estado.token) {
+    pedirLogin('Vuelve a ingresar (no se pierde lo que marcaste).');
+    throw new Error('sesion');
+  }
+  const r = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(Object.assign({ accion, token: estado.token }, datos || {}))
+  });
+  const res = await r.json();
+  if (!res.ok) {
+    if (res.codigo === 'token') { pedirLogin(res.mensaje); throw new Error('sesion'); }
+    if (res.codigo === 'sin_permiso' || res.codigo === 'dominio') { pedirLogin(res.mensaje); throw new Error('sesion'); }
+    throw new Error(res.mensaje || 'Error del servidor');
+  }
+  return res;
+}
+
+function aviso(texto, error) {
+  const t = $('toast');
+  t.textContent = texto;
+  t.className = error ? 'error' : '';
+  clearTimeout(aviso._t);
+  aviso._t = setTimeout(() => t.classList.add('oculto'), error ? 5000 : 2500);
+}
+
+/* ---------------- Inicio ---------------- */
+
+async function iniciar() {
+  $('app').classList.remove('oculto');
+  try {
+    const res = await api('inicio');
+    estado.docente = res.docente;
+    estado.incidentes = res.incidentes;
+    $('nombreDocente').textContent = res.docente.nombre;
+    $('cursoDocente').textContent = res.docente.curso;
+
+    if (!res.docente.secciones.length) {
+      $('cargando').textContent = 'No tienes secciones asignadas. Pide a coordinación que revise la pestaña Docentes.';
+      return;
+    }
+    pintarSecciones();
+    pintarOpciones();
+    const ultima = leerLocal('anec_seccion');
+    await elegirSeccion(res.docente.secciones.includes(ultima) ? ultima : res.docente.secciones[0]);
+    $('cargando').classList.add('oculto');
+    $('contenido').classList.remove('oculto');
+  } catch (e) {
+    if (e.message !== 'sesion') $('cargando').textContent = '❌ ' + e.message;
+  }
+}
+
+function pintarSecciones() {
+  const cont = $('secciones');
+  cont.innerHTML = '';
+  estado.docente.secciones.forEach((s) => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = s;
+    b.onclick = () => elegirSeccion(s);
+    b.dataset.sec = s;
+    cont.appendChild(b);
+  });
+  // Si solo tiene una sección, no hace falta mostrar el selector
+  $('tarjetaSecciones').classList.toggle('oculto', estado.docente.secciones.length === 1);
+}
+
+async function elegirSeccion(sec) {
+  estado.seccion = sec;
+  estado.seleccion.clear();
+  guardarLocal('anec_seccion', sec);
+  document.querySelectorAll('.chip').forEach((c) => c.classList.toggle('activo', c.dataset.sec === sec));
+  $('seccionHoy').textContent = sec;
+  $('alumnos').innerHTML = '<p class="vacio">Cargando alumnos…</p>';
+  try {
+    const res = await api('alumnos', { seccion: sec });
+    estado.alumnos = res.alumnos;
+    pintarAlumnos();
+    cargarHoy();
+  } catch (e) {
+    if (e.message !== 'sesion') $('alumnos').innerHTML = '<p class="vacio">❌ ' + e.message + '</p>';
+  }
+  actualizarBarra();
+}
+
+/* ---------------- Alumnos ---------------- */
+
+function pintarAlumnos() {
+  const filtro = $('buscar').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const cont = $('alumnos');
+  cont.innerHTML = '';
+  const lista = estado.alumnos.filter((a) =>
+    !filtro || a.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(filtro));
+  if (!estado.alumnos.length) { cont.innerHTML = '<p class="vacio">Esta sección no tiene alumnos en la lista.</p>'; return; }
+  if (!lista.length) { cont.innerHTML = '<p class="vacio">Ningún alumno coincide.</p>'; return; }
+
+  lista.forEach((a) => {
+    const [apellidos, nombres] = a.nombre.split(', ');
+    const b = document.createElement('button');
+    b.className = 'alumno' + (estado.seleccion.has(a.id) ? ' sel' : '');
+    const bb = document.createElement('b'); bb.textContent = apellidos || a.nombre;
+    const sp = document.createElement('span'); sp.textContent = aTitulo(nombres || '');
+    b.append(bb, sp);
+    b.onclick = () => {
+      estado.seleccion.has(a.id) ? estado.seleccion.delete(a.id) : estado.seleccion.add(a.id);
+      b.classList.toggle('sel');
+      actualizarBarra();
+    };
+    cont.appendChild(b);
+  });
+}
+
+function aTitulo(s) {
+  return s.toLowerCase().replace(/(^|\s)\S/g, (l) => l.toUpperCase());
+}
+
+$('buscar').oninput = pintarAlumnos;
+$('btnLimpiar').onclick = () => { estado.seleccion.clear(); pintarAlumnos(); actualizarBarra(); };
+
+/* ---------------- Anotaciones ---------------- */
+
+document.querySelectorAll('.pestana').forEach((p) => {
+  p.onclick = () => {
+    estado.tipo = p.dataset.tipo;
+    estado.incidente = null;
+    document.querySelectorAll('.pestana').forEach((x) => x.classList.toggle('activo', x === p));
+    pintarOpciones();
+    actualizarBarra();
+  };
+});
+
+function pintarOpciones() {
+  const cont = $('opciones');
+  cont.innerHTML = '';
+  const delTipo = estado.incidentes.filter((i) => i.tipo === estado.tipo);
+  const grupos = estado.tipo === 'Logro' ? ['—'] : ['Leve', 'Moderado', 'Grave'];
+
+  grupos.forEach((g) => {
+    const items = delTipo.filter((i) => (estado.tipo === 'Logro') || i.gravedad === g);
+    if (!items.length) return;
+    if (estado.tipo !== 'Logro') {
+      const t = document.createElement('div');
+      t.className = 'grupo';
+      t.textContent = g;
+      cont.appendChild(t);
+    }
+    const caja = document.createElement('div');
+    caja.className = 'opciones';
+    items.forEach((i) => {
+      const b = document.createElement('button');
+      b.className = 'opcion ' + (estado.tipo === 'Logro' ? 'Logro' : i.gravedad) +
+        (estado.incidente === i.incidente ? ' sel' : '');
+      b.textContent = i.incidente;
+      b.onclick = () => {
+        estado.incidente = i.incidente;
+        cont.querySelectorAll('.opcion').forEach((x) => x.classList.toggle('sel', x === b));
+        actualizarBarra();
+      };
+      caja.appendChild(b);
+    });
+    cont.appendChild(caja);
+  });
+}
+
+/* ---------------- Guardar ---------------- */
+
+function actualizarBarra() {
+  const n = estado.seleccion.size;
+  const listo = n > 0 && estado.incidente && !estado.guardando;
+  $('btnGuardar').disabled = !listo;
+  $('btnGuardar').textContent = estado.guardando ? 'Guardando…' : (n > 1 ? 'Guardar (' + n + ')' : 'Guardar');
+  $('resumen').textContent = !n ? 'Elige alumno(s)' :
+    !estado.incidente ? n + ' alumno(s) · elige una anotación' :
+    n + ' alumno(s) · ' + estado.incidente;
+}
+
+$('btnGuardar').onclick = async () => {
+  if (estado.guardando) return;
+  estado.guardando = true;
+  actualizarBarra();
+  try {
+    const res = await api('guardar', {
+      seccion: estado.seccion,
+      alumnos: Array.from(estado.seleccion),
+      incidente: estado.incidente,
+      nota: $('nota').value
+    });
+    aviso('✅ Guardado (' + res.guardados + ')');
+    estado.seleccion.clear();
+    estado.incidente = null;
+    $('nota').value = '';
+    $('buscar').value = '';
+    pintarAlumnos();
+    pintarOpciones();
+    cargarHoy();
+  } catch (e) {
+    if (e.message !== 'sesion') aviso('❌ ' + e.message, true);
+  } finally {
+    estado.guardando = false;
+    actualizarBarra();
+  }
+};
+
+/* ---------------- Registrado hoy ---------------- */
+
+async function cargarHoy() {
+  const sec = estado.seccion;
+  try {
+    const res = await api('hoy', { seccion: sec });
+    if (sec !== estado.seccion) return;
+    const cont = $('hoy');
+    cont.innerHTML = '';
+    if (!res.registros.length) { cont.innerHTML = '<p class="vacio">Aún no hay registros.</p>'; return; }
+    res.registros.forEach((r) => {
+      const fila = document.createElement('div');
+      fila.className = 'registro';
+      const punto = document.createElement('span');
+      punto.className = 'punto';
+      punto.style.background = r.tipo === 'Logro' ? 'var(--verde)' :
+        r.gravedad === 'Grave' ? 'var(--rojo)' : r.gravedad === 'Moderado' ? '#f0b400' : '#c4c6d3';
+      const info = document.createElement('div');
+      info.className = 'info';
+      const t1 = document.createElement('div'); t1.textContent = r.alumno;
+      const t2 = document.createElement('small');
+      t2.textContent = r.hora + ' · ' + r.incidente + (r.nota ? ' · "' + r.nota + '"' : '');
+      info.append(t1, t2);
+      fila.append(punto, info);
+      if (!r.enviado) {
+        const x = document.createElement('button');
+        x.className = 'borrar';
+        x.title = 'Borrar';
+        x.textContent = '×';
+        x.onclick = () => borrarRegistro(r, x);
+        fila.appendChild(x);
+      }
+      cont.appendChild(fila);
+    });
+  } catch (e) { /* silencioso */ }
+}
+
+async function borrarRegistro(r, boton) {
+  if (!confirm('¿Borrar "' + r.incidente + '" de ' + r.alumno + '?')) return;
+  boton.disabled = true;
+  try {
+    await api('borrar', { seccion: estado.seccion, id: r.id });
+    aviso('Registro borrado');
+    cargarHoy();
+  } catch (e) {
+    boton.disabled = false;
+    if (e.message !== 'sesion') aviso('❌ ' + e.message, true);
+  }
+}
+
+/* ---------------- Arranque ---------------- */
+
+(function () {
+  $('correo').value = leerLocal('anec_correo') || '';
+  const t = leerLocal('anec_token');
+  if (t) {
+    estado.token = t;
+    $('login').classList.add('oculto');
+    iniciar();
+  }
+})();
+</script>
+</body>
+</html>
