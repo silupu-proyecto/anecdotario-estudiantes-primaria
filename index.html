@@ -77,6 +77,14 @@
   .opcion.Grave{border-left:6px solid var(--rojo)}
   .opcion.Logro{border-left:6px solid var(--verde)}
   .opcion.sel{background:var(--azul);color:#fff;border-color:var(--azul)}
+  .opcion.sel::before{content:"✓ ";font-weight:700}
+  .cuenta{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:999px;
+    background:currentColor;font-size:12px;line-height:20px}
+  .cuenta span{color:#fff}
+  #elegidas{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  #elegidas:empty{display:none}
+  .etiqueta{background:#eef0f8;color:var(--azul);border-radius:999px;padding:4px 10px;font-size:13px}
+  .etiqueta button{background:none;border:0;color:var(--guinda);padding:0 0 0 6px;font-weight:700}
   textarea{width:100%;margin-top:12px;border:1px solid var(--borde);border-radius:10px;padding:10px;font:inherit;resize:vertical;min-height:60px}
 
   /* Hoy */
@@ -100,6 +108,69 @@
     padding:10px 16px;border-radius:10px;font-size:14px;z-index:60;max-width:90%;text-align:center}
   #toast.error{background:var(--rojo)}
   #cargando{text-align:center;color:var(--suave);padding:20px}
+
+  /* Pestañas de vista (solo tutores) */
+  #vistas{position:sticky;top:56px;z-index:9;background:var(--azul);display:flex;gap:4px;padding:0 12px 8px}
+  #vistas button{flex:1;max-width:220px;border:0;border-radius:10px;padding:8px;font-weight:700;font-size:14px;
+    background:rgba(255,255,255,.12);color:#fff}
+  #vistas button.activo{background:#fff;color:var(--azul)}
+
+  /* Reporte semanal */
+  .semana{display:flex;align-items:center;gap:8px}
+  .semana button{border:2px solid var(--borde);background:#fff;border-radius:10px;width:42px;height:40px;font-weight:700;color:var(--azul)}
+  .semana button:disabled{opacity:.35}
+  .semana .txt{flex:1;text-align:center}
+  .semana .txt b{display:block;color:var(--azul)}
+  .semana .txt small{color:var(--suave)}
+  .interruptor{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:14px}
+  .interruptor input{width:20px;height:20px;accent-color:var(--guinda)}
+  #repFiltros{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}
+  .filtro{flex:0 0 auto;border:2px solid var(--borde);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--azul)}
+  .filtro.activo{background:var(--azul);border-color:var(--azul);color:#fff}
+  #repBuscar{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:10px;margin-bottom:10px;font:inherit}
+  .rep-alumno{border:2px solid var(--borde);border-radius:12px;margin-bottom:8px;overflow:hidden}
+  .rep-cab{display:flex;align-items:center;gap:10px;width:100%;background:#fff;border:0;padding:10px 12px;text-align:left}
+  .rep-cab .nom{flex:1;min-width:0}
+  .rep-cab .nom b{display:block;font-size:13px;color:var(--azul)}
+  .rep-cab .nom span{font-size:13px;color:var(--suave)}
+  .cuentas{font-size:13px;white-space:nowrap;color:var(--suave)}
+  .estado{font-size:12px;font-weight:700;border-radius:999px;padding:3px 8px;white-space:nowrap}
+  .estado.pendiente{background:var(--ambar-bg);color:var(--ambar)}
+  .estado.enviado{background:var(--verde-bg);color:var(--verde)}
+  .estado.sinCorreo{background:#eceef5;color:var(--suave)}
+  .estado.nada{background:#eceef5;color:var(--suave)}
+  .rep-det{border-top:1px solid var(--borde);padding:8px 12px 12px;background:#fafbfe}
+  .rep-reg{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--borde);font-size:14px}
+  .rep-reg:last-of-type{border-bottom:0}
+  .rep-reg.excluido .info{opacity:.45;text-decoration:line-through}
+  .rep-reg .info{flex:1;min-width:0}
+  .rep-reg small{display:block;color:var(--suave)}
+  .rep-reg em{display:block;color:#444;font-size:13px}
+  .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;margin-left:4px;vertical-align:middle}
+  .tag.ant{background:#eef0f8;color:var(--azul)}
+  .tag.env{background:var(--verde-bg);color:var(--verde)}
+  .btn-mini{flex:0 0 auto;align-self:center;border:1px solid var(--borde);background:#fff;border-radius:8px;padding:5px 8px;font-size:12px;color:var(--suave)}
+  .correos{font-size:13px;color:var(--suave);margin:8px 0;word-break:break-all}
+  .acciones{display:flex;gap:8px;margin-top:8px}
+  .btn{flex:1;border-radius:10px;padding:10px;font-weight:700;font-size:14px;border:2px solid var(--azul);background:#fff;color:var(--azul)}
+  .btn.primario{background:var(--guinda);border-color:var(--guinda);color:#fff}
+  .btn:disabled{opacity:.45}
+  .pie-rep{font-size:13px;color:var(--suave);text-align:center;margin:6px 0 0}
+  #barraReporte{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--borde);
+    padding:10px 14px max(10px,env(safe-area-inset-bottom));z-index:10}
+  #barraReporte .dentro{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center}
+  #repResumen{flex:1;font-size:13px;color:var(--suave);min-width:0}
+  #btnEnviarTodos{background:var(--guinda);color:#fff;border:0;border-radius:12px;padding:13px 16px;font-weight:700}
+  #btnEnviarTodos:disabled{background:#c9cad6}
+
+  /* Vista previa */
+  #modal{position:fixed;inset:0;z-index:70;background:rgba(10,12,40,.55);display:flex;align-items:flex-end;justify-content:center}
+  .modal-caja{background:#fff;width:100%;max-width:680px;max-height:92vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
+  @media (min-width:700px){#modal{align-items:center}.modal-caja{border-radius:18px}}
+  .modal-cab{padding:12px 16px;border-bottom:1px solid var(--borde);font-size:13px;color:var(--suave)}
+  .modal-cab b{color:var(--texto)}
+  #modalMarco{flex:1;width:100%;min-height:50vh;border:0;background:#f3f4f9}
+  .modal-pie{display:flex;gap:8px;padding:10px 16px max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--borde)}
 </style>
 </head>
 <body>
@@ -112,7 +183,7 @@
     <p>Ingresa con tu correo del colegio</p>
     <form id="formLogin" autocomplete="on">
       <label for="correo">Correo</label>
-      <input id="correo" type="email" inputmode="email" autocomplete="username"
+      <input id="correo" type="text" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username"
              placeholder="usuario@colegioproyecto.com" required>
       <label for="pin">PIN</label>
       <input id="pin" type="password" inputmode="numeric" autocomplete="current-password"
@@ -130,8 +201,12 @@
     <div class="quien"><b id="nombreDocente">—</b><span id="cursoDocente"></span></div>
     <button id="btnSalir">Salir</button>
   </header>
+  <nav id="vistas" class="oculto">
+    <button data-vista="registrar" class="activo">✏️ Registrar</button>
+    <button data-vista="reporte">📨 Reporte semanal</button>
+  </nav>
 
-  <main>
+  <main id="vistaRegistrar">
     <div id="cargando">Cargando…</div>
 
     <div id="contenido" class="oculto">
@@ -148,12 +223,14 @@
       </section>
 
       <section class="tarjeta">
-        <h2><span class="num">2</span> Anotación</h2>
+        <h2><span class="num">2</span> Anotación(es)
+          <span class="derecha"><button class="link" id="btnLimpiarAcciones">Limpiar</button></span></h2>
         <div class="pestanas">
           <button class="pestana mejorar activo" data-tipo="A mejorar">📌 A mejorar</button>
           <button class="pestana logro" data-tipo="Logro">🌟 Logro</button>
         </div>
         <div id="opciones"></div>
+        <div id="elegidas"></div>
         <textarea id="nota" maxlength="500" placeholder="Nota (opcional)"></textarea>
       </section>
 
@@ -164,6 +241,38 @@
     </div>
   </main>
 
+  <!-- Vista del tutor: reporte semanal -->
+  <div id="vistaReporte" class="oculto">
+    <main>
+      <section class="tarjeta">
+        <div id="repSecciones" class="oculto" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px"></div>
+        <div class="semana">
+          <button id="semAnt" aria-label="Semana anterior">◀</button>
+          <div class="txt"><b id="semTxt">Semana</b><small id="semSub"></small></div>
+          <button id="semSig" aria-label="Semana siguiente">▶</button>
+        </div>
+        <label class="interruptor">
+          <input type="checkbox" id="incluirAnt">
+          Incluir pendientes de semanas anteriores
+        </label>
+      </section>
+
+      <section class="tarjeta">
+        <div id="repFiltros"></div>
+        <input id="repBuscar" type="search" placeholder="Buscar alumno…" autocomplete="off">
+        <div id="repLista"><p class="vacio">Cargando…</p></div>
+        <p class="pie-rep" id="repPie"></p>
+      </section>
+    </main>
+
+    <div id="barraReporte">
+      <div class="dentro">
+        <div id="repResumen"></div>
+        <button id="btnEnviarTodos" disabled>Enviar pendientes</button>
+      </div>
+    </div>
+  </div>
+
   <div id="barra">
     <div class="dentro">
       <div id="resumen">Elige alumno(s) y una anotación</div>
@@ -172,18 +281,34 @@
   </div>
 </div>
 
+<div id="modal" class="oculto">
+  <div class="modal-caja" role="dialog" aria-modal="true">
+    <div class="modal-cab">
+      <div>Para: <b id="modalPara"></b></div>
+      <div>Asunto: <b id="modalAsunto"></b></div>
+    </div>
+    <iframe id="modalMarco" sandbox="" title="Vista previa del correo"></iframe>
+    <div class="modal-pie">
+      <button class="btn" id="modalCerrar">Cerrar</button>
+      <button class="btn primario" id="modalEnviar">Enviar</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="oculto"></div>
 
 <script>
 /* 👉 Pega aquí la URL /exec de Apps Script */
-const API_URL = 'https://script.google.com/macros/s/AKfycbzTthNBLVRBpOpBu2AK5g6Iy5qrUFGtAM5md5DerDy6nAV4AZf4P3Gbjy44gWl-vZu6TA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwvTejexc9EMKdAuHjquC7h8Rvc485IW5NVGvuVqKSnD1IIgxFbb67VW-grLLqfC8IMPQ/exec';
 const DOMINIO = '@colegioproyecto.com';
 
 const $ = (id) => document.getElementById(id);
 const estado = {
-  token: null, docente: null, incidentes: [], seccion: null,
-  alumnos: [], seleccion: new Set(), tipo: 'A mejorar', incidente: null, guardando: false
+  token: null, docente: null, incidentes: [], seccion: null, alumnosPorSeccion: {}, vista: 'registrar',
+  alumnos: [], seleccion: new Set(), tipo: 'A mejorar', acciones: new Set(), guardando: false
 };
+let ultimaSync = 0;
+const MINUTOS_ENTRE_REVISIONES = 5;
 
 /* ---------------- Sesión (correo + PIN) ---------------- */
 
@@ -207,12 +332,19 @@ $('formLogin').onsubmit = async (ev) => {
     });
     const res = await r.json();
     if (!res.ok) throw new Error(res.mensaje || 'No se pudo ingresar');
+    // Si en este celular entra otro profesor, se reinicia la página para no mezclar datos
+    if (estado.docente && estado.docente.correo !== correo) {
+      guardarLocal('anec_token', res.token);
+      guardarLocal('anec_correo', correo);
+      location.reload();
+      return;
+    }
     estado.token = res.token;
     guardarLocal('anec_token', res.token);
     guardarLocal('anec_correo', correo);
     $('pin').value = '';
     $('login').classList.add('oculto');
-    if (!estado.docente) iniciar();
+    if (!estado.docente) iniciar(); else sincronizar();
   } catch (e) {
     $('msgLogin').textContent = e.message === 'Failed to fetch' ? 'Sin conexión. Inténtalo de nuevo.' : e.message;
   } finally {
@@ -230,10 +362,26 @@ function pedirLogin(mensaje) {
 }
 
 $('btnSalir').onclick = () => {
+  // Al salir se borra también la lista guardada (por si el celular es compartido)
+  borrarLocal(claveDatos());
   borrarLocal('anec_token');
   borrarLocal('anec_seccion');
   location.reload();
 };
+
+/* ---------------- Datos guardados en el navegador ---------------- */
+
+function claveDatos() {
+  return 'anec_datos_' + (leerLocal('anec_correo') || '');
+}
+
+function leerCache() {
+  try { return JSON.parse(leerLocal(claveDatos()) || 'null'); } catch (e) { return null; }
+}
+
+function guardarCache(version, datos) {
+  guardarLocal(claveDatos(), JSON.stringify({ version, datos, guardado: Date.now() }));
+}
 
 /* ---------------- API ---------------- */
 
@@ -251,7 +399,9 @@ async function api(accion, datos) {
   if (!res.ok) {
     if (res.codigo === 'token') { pedirLogin(res.mensaje); throw new Error('sesion'); }
     if (res.codigo === 'sin_permiso' || res.codigo === 'dominio') { pedirLogin(res.mensaje); throw new Error('sesion'); }
-    throw new Error(res.mensaje || 'Error del servidor');
+    const err = new Error(res.mensaje || 'Error del servidor');
+    err.codigo = res.codigo;
+    throw err;
   }
   return res;
 }
@@ -268,26 +418,61 @@ function aviso(texto, error) {
 
 async function iniciar() {
   $('app').classList.remove('oculto');
-  try {
-    const res = await api('inicio');
-    estado.docente = res.docente;
-    estado.incidentes = res.incidentes;
-    $('nombreDocente').textContent = res.docente.nombre;
-    $('cursoDocente').textContent = res.docente.curso;
+  // 1) Si hay datos guardados, se muestran al instante
+  const cache = leerCache();
+  if (cache && cache.datos) aplicarDatos(cache.datos, false);
+  // 2) Por detrás se revisa el Sheets por si hubo cambios
+  await sincronizar();
+}
 
-    if (!res.docente.secciones.length) {
-      $('cargando').textContent = 'No tienes secciones asignadas. Pide a coordinación que revise la pestaña Docentes.';
-      return;
-    }
-    pintarSecciones();
-    pintarOpciones();
-    const ultima = leerLocal('anec_seccion');
-    await elegirSeccion(res.docente.secciones.includes(ultima) ? ultima : res.docente.secciones[0]);
-    $('cargando').classList.add('oculto');
-    $('contenido').classList.remove('oculto');
+async function sincronizar() {
+  const cache = leerCache();
+  try {
+    const res = await api('datos', { version: cache && cache.version });
+    ultimaSync = Date.now();
+    if (res.sinCambios) return;
+    guardarCache(res.version, res.datos);
+    const yaSeMostraba = !!estado.docente;
+    aplicarDatos(res.datos, yaSeMostraba);
+    if (yaSeMostraba) aviso('🔄 Lista actualizada');
   } catch (e) {
-    if (e.message !== 'sesion') $('cargando').textContent = '❌ ' + e.message;
+    if (e.message === 'sesion') return;
+    // Sin internet pero con datos guardados: se sigue trabajando con lo que hay
+    if (!estado.docente) {
+      $('cargando').textContent = e.message === 'Failed to fetch'
+        ? '❌ Sin conexión. Revisa tu internet y recarga la página.' : '❌ ' + e.message;
+    }
   }
+}
+
+function aplicarDatos(d, conservar) {
+  estado.docente = d.docente;
+  estado.incidentes = d.incidentes || [];
+  estado.alumnosPorSeccion = d.alumnos || {};
+  $('nombreDocente').textContent = d.docente.nombre;
+  $('cursoDocente').textContent = d.docente.curso;
+
+  if (!d.docente.secciones.length) {
+    $('cargando').textContent = 'No tienes secciones asignadas. Pide a coordinación que revise la pestaña Docentes.';
+    $('cargando').classList.remove('oculto');
+    $('contenido').classList.add('oculto');
+    return;
+  }
+
+  // Si alguna anotación elegida ya no existe, se deselecciona
+  Array.from(estado.acciones).forEach((n) => {
+    if (!estado.incidentes.some((i) => i.incidente === n)) estado.acciones.delete(n);
+  });
+  pintarSecciones();
+  pintarOpciones();
+
+  const preferida = conservar && estado.seccion ? estado.seccion : leerLocal('anec_seccion');
+  const sec = d.docente.secciones.includes(preferida) ? preferida : d.docente.secciones[0];
+  elegirSeccion(sec, conservar && sec === estado.seccion);
+
+  $('cargando').classList.add('oculto');
+  $('contenido').classList.remove('oculto');
+  actualizarVistas();
 }
 
 function pintarSecciones() {
@@ -305,23 +490,37 @@ function pintarSecciones() {
   $('tarjetaSecciones').classList.toggle('oculto', estado.docente.secciones.length === 1);
 }
 
-async function elegirSeccion(sec) {
+// Cambiar de sección es instantáneo: los alumnos ya están en el navegador
+function elegirSeccion(sec, conservarSeleccion) {
+  const cambia = sec !== estado.seccion;
   estado.seccion = sec;
-  estado.seleccion.clear();
+  estado.alumnos = estado.alumnosPorSeccion[sec] || [];
+
+  if (conservarSeleccion) {
+    const ids = new Set(estado.alumnos.map((a) => a.id));
+    Array.from(estado.seleccion).forEach((id) => { if (!ids.has(id)) estado.seleccion.delete(id); });
+  } else {
+    estado.seleccion.clear();
+  }
+
   guardarLocal('anec_seccion', sec);
   document.querySelectorAll('.chip').forEach((c) => c.classList.toggle('activo', c.dataset.sec === sec));
   $('seccionHoy').textContent = sec;
-  $('alumnos').innerHTML = '<p class="vacio">Cargando alumnos…</p>';
-  try {
-    const res = await api('alumnos', { seccion: sec });
-    estado.alumnos = res.alumnos;
-    pintarAlumnos();
+  pintarAlumnos();
+  if (cambia) {
+    $('hoy').innerHTML = '<p class="vacio">Cargando…</p>';
     cargarHoy();
-  } catch (e) {
-    if (e.message !== 'sesion') $('alumnos').innerHTML = '<p class="vacio">❌ ' + e.message + '</p>';
   }
   actualizarBarra();
 }
+
+// Al volver a la app (por ejemplo, después de tenerla minimizada) se revisa si hubo cambios
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && estado.token && estado.docente &&
+      Date.now() - ultimaSync > MINUTOS_ENTRE_REVISIONES * 60000) {
+    sincronizar();
+  }
+});
 
 /* ---------------- Alumnos ---------------- */
 
@@ -361,11 +560,10 @@ $('btnLimpiar').onclick = () => { estado.seleccion.clear(); pintarAlumnos(); act
 
 document.querySelectorAll('.pestana').forEach((p) => {
   p.onclick = () => {
+    // Cambiar de pestaña NO borra lo elegido: se puede marcar un logro y algo a mejorar a la vez
     estado.tipo = p.dataset.tipo;
-    estado.incidente = null;
     document.querySelectorAll('.pestana').forEach((x) => x.classList.toggle('activo', x === p));
     pintarOpciones();
-    actualizarBarra();
   };
 });
 
@@ -389,29 +587,69 @@ function pintarOpciones() {
     items.forEach((i) => {
       const b = document.createElement('button');
       b.className = 'opcion ' + (estado.tipo === 'Logro' ? 'Logro' : i.gravedad) +
-        (estado.incidente === i.incidente ? ' sel' : '');
+        (estado.acciones.has(i.incidente) ? ' sel' : '');
       b.textContent = i.incidente;
       b.onclick = () => {
-        estado.incidente = i.incidente;
-        cont.querySelectorAll('.opcion').forEach((x) => x.classList.toggle('sel', x === b));
+        estado.acciones.has(i.incidente) ? estado.acciones.delete(i.incidente) : estado.acciones.add(i.incidente);
+        b.classList.toggle('sel');
+        pintarElegidas();
         actualizarBarra();
       };
       caja.appendChild(b);
     });
     cont.appendChild(caja);
   });
+  pintarElegidas();
 }
+
+// Muestra lo elegido (de ambas pestañas) y el contador en cada pestaña
+function pintarElegidas() {
+  const cont = $('elegidas');
+  cont.innerHTML = '';
+  const tipoDe = (n) => (estado.incidentes.find((i) => i.incidente === n) || {}).tipo;
+  estado.acciones.forEach((n) => {
+    const e = document.createElement('span');
+    e.className = 'etiqueta';
+    e.textContent = (tipoDe(n) === 'Logro' ? '🌟 ' : '📌 ') + n;
+    const x = document.createElement('button');
+    x.textContent = '×';
+    x.title = 'Quitar';
+    x.onclick = () => { estado.acciones.delete(n); pintarOpciones(); actualizarBarra(); };
+    e.appendChild(x);
+    cont.appendChild(e);
+  });
+  document.querySelectorAll('.pestana').forEach((p) => {
+    const n = Array.from(estado.acciones).filter((a) => tipoDe(a) === p.dataset.tipo).length;
+    const base = p.dataset.tipo === 'Logro' ? '🌟 Logro' : '📌 A mejorar';
+    p.textContent = base;
+    if (n) {
+      const c = document.createElement('span');
+      c.className = 'cuenta';
+      const t = document.createElement('span');
+      t.textContent = n;
+      c.appendChild(t);
+      p.appendChild(c);
+    }
+  });
+}
+
+$('btnLimpiarAcciones').onclick = () => { estado.acciones.clear(); pintarOpciones(); actualizarBarra(); };
 
 /* ---------------- Guardar ---------------- */
 
 function actualizarBarra() {
   const n = estado.seleccion.size;
-  const listo = n > 0 && estado.incidente && !estado.guardando;
+  const m = estado.acciones.size;
+  const listo = n > 0 && m > 0 && !estado.guardando;
   $('btnGuardar').disabled = !listo;
-  $('btnGuardar').textContent = estado.guardando ? 'Guardando…' : (n > 1 ? 'Guardar (' + n + ')' : 'Guardar');
-  $('resumen').textContent = !n ? 'Elige alumno(s)' :
-    !estado.incidente ? n + ' alumno(s) · elige una anotación' :
-    n + ' alumno(s) · ' + estado.incidente;
+  $('btnGuardar').textContent = estado.guardando ? 'Guardando…' : 'Guardar';
+  const txtAlumnos = n === 1 ? '1 alumno' : n + ' alumnos';
+  const txtAcciones = m === 1 ? Array.from(estado.acciones)[0] : m + ' anotaciones';
+  $('resumen').textContent =
+    !n && !m ? 'Elige alumno(s) y anotación(es)' :
+    !n ? txtAcciones + ' · elige alumno(s)' :
+    !m ? txtAlumnos + ' · elige anotación(es)' :
+    txtAlumnos + ' · ' + txtAcciones;
 }
 
 $('btnGuardar').onclick = async () => {
@@ -422,19 +660,26 @@ $('btnGuardar').onclick = async () => {
     const res = await api('guardar', {
       seccion: estado.seccion,
       alumnos: Array.from(estado.seleccion),
-      incidente: estado.incidente,
+      incidentes: Array.from(estado.acciones),
       nota: $('nota').value
     });
-    aviso('✅ Guardado (' + res.guardados + ')');
+    aviso('✅ Guardado (' + res.guardados + (res.guardados === 1 ? ' registro)' : ' registros)'));
     estado.seleccion.clear();
-    estado.incidente = null;
+    estado.acciones.clear();
     $('nota').value = '';
     $('buscar').value = '';
     pintarAlumnos();
     pintarOpciones();
     cargarHoy();
   } catch (e) {
-    if (e.message !== 'sesion') aviso('❌ ' + e.message, true);
+    if (e.message === 'sesion') return;
+    if (['alumnos', 'incidente', 'seccion'].includes(e.codigo)) {
+      // La lista cambió en el Sheets: se actualiza y el profe revisa antes de volver a guardar
+      aviso('La lista cambió en el colegio. Ya se actualizó: revisa y vuelve a guardar.', true);
+      sincronizar();
+    } else {
+      aviso('❌ ' + (e.message === 'Failed to fetch' ? 'Sin conexión. No se guardó, inténtalo de nuevo.' : e.message), true);
+    }
   } finally {
     estado.guardando = false;
     actualizarBarra();
@@ -488,6 +733,317 @@ async function borrarRegistro(r, boton) {
   } catch (e) {
     boton.disabled = false;
     if (e.message !== 'sesion') aviso('❌ ' + e.message, true);
+  }
+}
+
+/* =================================================================== */
+/* Reporte semanal (solo tutores)                                       */
+/* =================================================================== */
+
+const rep = {
+  seccion: null, semana: null, datos: null, filtro: 'todos', abiertos: new Set(),
+  incluirAnteriores: leerLocal('anec_incluirAnt') === '1', cargando: false, enviando: false
+};
+$('incluirAnt').checked = rep.incluirAnteriores;
+
+const ESTADOS = {
+  pendiente: '🟡 Pendiente', enviado: '✅ Enviado', sinCorreo: '⚪ Sin correo', nada: '— No se envía'
+};
+
+function esTutor() {
+  return !!(estado.docente && estado.docente.tutorDe && estado.docente.tutorDe.length);
+}
+
+function actualizarVistas() {
+  $('vistas').classList.toggle('oculto', !esTutor());
+  if (!esTutor() && estado.vista === 'reporte') mostrarVista('registrar');
+}
+
+function mostrarVista(v) {
+  estado.vista = v;
+  document.querySelectorAll('#vistas button').forEach((b) => b.classList.toggle('activo', b.dataset.vista === v));
+  $('vistaRegistrar').classList.toggle('oculto', v !== 'registrar');
+  $('barra').classList.toggle('oculto', v !== 'registrar');
+  $('vistaReporte').classList.toggle('oculto', v !== 'reporte');
+  window.scrollTo(0, 0);
+  if (v === 'reporte') abrirReporte();
+}
+
+document.querySelectorAll('#vistas button').forEach((b) => { b.onclick = () => mostrarVista(b.dataset.vista); });
+
+function abrirReporte() {
+  const tutorDe = estado.docente.tutorDe;
+  if (!tutorDe.includes(rep.seccion)) {
+    const guardada = leerLocal('anec_repSeccion');
+    rep.seccion = tutorDe.includes(guardada) ? guardada : tutorDe[0];
+  }
+  // Selector de sección solo si es tutor de varias
+  const cont = $('repSecciones');
+  cont.innerHTML = '';
+  cont.classList.toggle('oculto', tutorDe.length < 2);
+  tutorDe.forEach((sec) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (sec === rep.seccion ? ' activo' : '');
+    b.textContent = sec;
+    b.onclick = () => {
+      rep.seccion = sec;
+      guardarLocal('anec_repSeccion', sec);
+      cont.querySelectorAll('.chip').forEach((c) => c.classList.toggle('activo', c === b));
+      cargarReporte();
+    };
+    cont.appendChild(b);
+  });
+  cargarReporte();
+}
+
+function sumarDias(fechaTxt, dias) {
+  const [a, m, d] = fechaTxt.split('-').map(Number);
+  const f = new Date(a, m - 1, d + dias, 12);
+  return f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0') + '-' + String(f.getDate()).padStart(2, '0');
+}
+
+$('semAnt').onclick = () => { if (rep.datos) { rep.semana = sumarDias(rep.datos.semana.lunes, -7); cargarReporte(); } };
+$('semSig').onclick = () => { if (rep.datos) { rep.semana = sumarDias(rep.datos.semana.lunes, 7); cargarReporte(); } };
+$('incluirAnt').onchange = () => {
+  rep.incluirAnteriores = $('incluirAnt').checked;
+  guardarLocal('anec_incluirAnt', rep.incluirAnteriores ? '1' : '0');
+  cargarReporte();
+};
+$('repBuscar').oninput = pintarReporte;
+
+async function cargarReporte() {
+  const pedido = rep.seccion + '|' + rep.semana + '|' + rep.incluirAnteriores;
+  rep.cargando = pedido;
+  $('repLista').innerHTML = '<p class="vacio">Cargando…</p>';
+  $('repFiltros').innerHTML = '';
+  $('btnEnviarTodos').disabled = true;
+  try {
+    const res = await api('reporte', { seccion: rep.seccion, semana: rep.semana, incluirAnteriores: rep.incluirAnteriores });
+    if (rep.cargando !== pedido) return; // llegó tarde una respuesta vieja
+    rep.datos = res;
+    rep.semana = res.semana.lunes;
+    pintarReporte();
+  } catch (e) {
+    if (e.message !== 'sesion') $('repLista').innerHTML = '<p class="vacio">❌ ' + e.message + '</p>';
+  } finally {
+    if (rep.cargando === pedido) rep.cargando = false;
+  }
+}
+
+function contar(alumnos) {
+  const c = { todos: alumnos.length, pendiente: 0, enviado: 0, sinCorreo: 0 };
+  alumnos.forEach((a) => { if (c[a.estado] !== undefined) c[a.estado]++; });
+  return c;
+}
+
+function pintarReporte() {
+  const d = rep.datos;
+  if (!d) return;
+  const sem = d.semana;
+  $('semTxt').textContent = 'Semana del ' + sem.etiqueta;
+  $('semSub').textContent = rep.seccion + (sem.esActual ? ' · semana actual' : '');
+  $('semSig').disabled = sem.esActual || sem.esFutura;
+
+  // Filtros con contadores
+  const c = contar(d.alumnos);
+  const filtros = [['todos', 'Todos'], ['pendiente', '🟡 Pendientes'], ['enviado', '✅ Enviados'], ['sinCorreo', '⚪ Sin correo']];
+  const cf = $('repFiltros');
+  cf.innerHTML = '';
+  filtros.forEach(([k, txt]) => {
+    const b = document.createElement('button');
+    b.className = 'filtro' + (rep.filtro === k ? ' activo' : '');
+    b.textContent = txt + ' (' + c[k] + ')';
+    b.onclick = () => { rep.filtro = k; pintarReporte(); };
+    cf.appendChild(b);
+  });
+
+  // Lista
+  const q = $('repBuscar').value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const lista = d.alumnos.filter((a) =>
+    (rep.filtro === 'todos' || a.estado === rep.filtro) &&
+    (!q || a.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q)));
+  const cont = $('repLista');
+  cont.innerHTML = '';
+  if (!d.alumnos.length) {
+    cont.innerHTML = '<p class="vacio">No hay anotaciones en esta semana.</p>';
+  } else if (!lista.length) {
+    cont.innerHTML = '<p class="vacio">Ningún alumno en este filtro.</p>';
+  }
+  lista.forEach((a) => cont.appendChild(tarjetaAlumno(a)));
+
+  $('repPie').textContent =
+    (d.sinAnotaciones ? d.sinAnotaciones + ' alumno(s) sin anotaciones esta semana (no reciben correo). ' : '') +
+    'Envíos disponibles hoy: ' + d.cuota + '.';
+
+  // Barra inferior
+  $('repResumen').textContent = c.pendiente
+    ? c.pendiente + ' pendiente(s)' + (c.sinCorreo ? ' · ' + c.sinCorreo + ' sin correo' : '')
+    : (c.todos ? 'Nada pendiente por enviar' : '');
+  $('btnEnviarTodos').disabled = !c.pendiente || rep.enviando;
+  $('btnEnviarTodos').textContent = rep.enviando ? 'Enviando…' : 'Enviar pendientes (' + c.pendiente + ')';
+}
+
+function tarjetaAlumno(a) {
+  const caja = document.createElement('div');
+  caja.className = 'rep-alumno';
+
+  const logros = a.registros.filter((r) => r.tipo === 'Logro' && !r.noEnviar).length;
+  const mejorar = a.registros.filter((r) => r.tipo !== 'Logro' && !r.noEnviar).length;
+  const [apellidos, nombres] = a.nombre.split(', ');
+
+  const cab = document.createElement('button');
+  cab.className = 'rep-cab';
+  const nom = document.createElement('div');
+  nom.className = 'nom';
+  const b = document.createElement('b'); b.textContent = apellidos || a.nombre;
+  const sp = document.createElement('span'); sp.textContent = aTitulo(nombres || '');
+  nom.append(b, sp);
+  const cu = document.createElement('span');
+  cu.className = 'cuentas';
+  cu.textContent = '🌟 ' + logros + ' · 📌 ' + mejorar;
+  const es = document.createElement('span');
+  es.className = 'estado ' + a.estado;
+  es.textContent = ESTADOS[a.estado] || a.estado;
+  cab.append(nom, cu, es);
+  cab.onclick = () => {
+    rep.abiertos.has(a.id) ? rep.abiertos.delete(a.id) : rep.abiertos.add(a.id);
+    det.classList.toggle('oculto');
+  };
+  caja.appendChild(cab);
+
+  const det = document.createElement('div');
+  det.className = 'rep-det' + (rep.abiertos.has(a.id) ? '' : ' oculto');
+
+  a.registros.forEach((r) => {
+    const fila = document.createElement('div');
+    fila.className = 'rep-reg' + (r.noEnviar ? ' excluido' : '');
+    const info = document.createElement('div');
+    info.className = 'info';
+    const t = document.createElement('div');
+    t.textContent = (r.tipo === 'Logro' ? '🌟 ' : r.gravedad === 'Grave' ? '🔴 ' : '📌 ') + r.incidente;
+    if (r.anterior) { const g = document.createElement('span'); g.className = 'tag ant'; g.textContent = 'semana anterior'; t.appendChild(g); }
+    if (r.enviado) { const g = document.createElement('span'); g.className = 'tag env'; g.textContent = 'enviado ' + r.enviado; t.appendChild(g); }
+    const sm = document.createElement('small');
+    sm.textContent = r.dia + ' ' + r.hora + ' · ' + r.curso + ' · ' + r.docente;
+    info.append(t, sm);
+    if (r.nota) { const em = document.createElement('em'); em.textContent = '“' + r.nota + '”'; info.appendChild(em); }
+    fila.appendChild(info);
+    if (!r.enviado) {
+      const x = document.createElement('button');
+      x.className = 'btn-mini';
+      x.textContent = r.noEnviar ? 'Incluir' : 'No enviar';
+      x.onclick = () => cambiarNoEnviar(r, !r.noEnviar, x);
+      fila.appendChild(x);
+    }
+    det.appendChild(fila);
+  });
+
+  const co = document.createElement('div');
+  co.className = 'correos';
+  co.textContent = a.correos.length ? '📧 ' + a.correos.join(', ')
+    : (a.enLista ? '📧 Sin correo de los padres. Complétalo desde Fichas.' : '⚠️ Este alumno ya no está en la lista de la sección.');
+  det.appendChild(co);
+
+  if (a.correos.length && a.estado !== 'nada') {
+    const reenviar = a.estado === 'enviado';
+    const acc = document.createElement('div');
+    acc.className = 'acciones';
+    const bv = document.createElement('button');
+    bv.className = 'btn';
+    bv.textContent = '👁 Vista previa';
+    bv.onclick = () => vistaPrevia(a, reenviar, bv);
+    const be = document.createElement('button');
+    be.className = 'btn primario';
+    be.textContent = reenviar ? 'Reenviar' : 'Enviar a sus padres';
+    be.onclick = () => enviarUno(a, reenviar);
+    acc.append(bv, be);
+    det.appendChild(acc);
+  }
+  caja.appendChild(det);
+  return caja;
+}
+
+async function cambiarNoEnviar(r, valor, boton) {
+  boton.disabled = true;
+  try {
+    await api('noEnviar', { seccion: rep.seccion, id: r.id, valor });
+    await cargarReporte();
+  } catch (e) {
+    boton.disabled = false;
+    if (e.message !== 'sesion') aviso('❌ ' + e.message, true);
+  }
+}
+
+/* ---- Vista previa ---- */
+
+let enviarDesdeModal = null;
+
+async function vistaPrevia(a, reenviar, boton) {
+  boton.disabled = true;
+  try {
+    const res = await api('vistaPrevia', {
+      seccion: rep.seccion, semana: rep.semana, incluirAnteriores: rep.incluirAnteriores, alumnoId: a.id, reenviar
+    });
+    $('modalPara').textContent = res.para.join(', ');
+    $('modalAsunto').textContent = res.asunto;
+    $('modalMarco').srcdoc = res.html;
+    $('modalEnviar').textContent = reenviar ? 'Reenviar' : 'Enviar';
+    enviarDesdeModal = () => enviarUno(a, reenviar);
+    $('modal').classList.remove('oculto');
+  } catch (e) {
+    if (e.message !== 'sesion') aviso('❌ ' + e.message, true);
+  } finally {
+    boton.disabled = false;
+  }
+}
+
+function cerrarModal() {
+  $('modal').classList.add('oculto');
+  $('modalMarco').srcdoc = '';
+  enviarDesdeModal = null;
+}
+$('modalCerrar').onclick = cerrarModal;
+$('modal').onclick = (ev) => { if (ev.target === $('modal')) cerrarModal(); };
+$('modalEnviar').onclick = () => { const f = enviarDesdeModal; cerrarModal(); if (f) f(); };
+
+/* ---- Envío ---- */
+
+async function enviarUno(a, reenviar) {
+  const txt = (reenviar ? '¿Reenviar' : '¿Enviar') + ' el reporte de ' + a.nombre + ' a:\n' + a.correos.join('\n') + '?';
+  if (!confirm(txt)) return;
+  await enviar([a.id], reenviar);
+}
+
+$('btnEnviarTodos').onclick = async () => {
+  const pendientes = rep.datos.alumnos.filter((a) => a.estado === 'pendiente');
+  if (!pendientes.length) return;
+  if (!confirm('¿Enviar el reporte a los padres de ' + pendientes.length + ' alumno(s)?\n\n' +
+      'Cada familia recibe solo el correo de su hijo(a).')) return;
+  await enviar(pendientes.map((a) => a.id), false);
+};
+
+async function enviar(ids, reenviar) {
+  if (rep.enviando) return;
+  rep.enviando = true;
+  pintarReporte();
+  aviso('Enviando… no cierres la app');
+  try {
+    const res = await api('enviar', {
+      seccion: rep.seccion, semana: rep.semana, incluirAnteriores: rep.incluirAnteriores, alumnos: ids, reenviar
+    });
+    const partes = ['✅ Enviados: ' + res.enviados];
+    if (res.sinCorreo) partes.push(res.sinCorreo + ' sin correo');
+    if (res.faltan) partes.push('faltan ' + res.faltan + ': vuelve a pulsar Enviar pendientes');
+    if (res.errores.length) partes.push(res.errores.length + ' con error (' + res.errores.map((x) => x.nombre).join(', ') + ')');
+    aviso(partes.join(' · '), res.errores.length > 0 || res.faltan > 0);
+  } catch (e) {
+    if (e.message !== 'sesion') {
+      aviso('❌ ' + (e.message === 'Failed to fetch'
+        ? 'Se perdió la conexión. Revisa la lista antes de reintentar: algunos pueden haberse enviado.' : e.message), true);
+    }
+  } finally {
+    rep.enviando = false;
+    cargarReporte();
   }
 }
 
