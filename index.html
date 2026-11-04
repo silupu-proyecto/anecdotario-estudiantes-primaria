@@ -155,6 +155,11 @@
   .btn{flex:1;border-radius:10px;padding:10px;font-weight:700;font-size:14px;border:2px solid var(--azul);background:#fff;color:var(--azul)}
   .btn.primario{background:var(--guinda);border-color:var(--guinda);color:#fff}
   .btn:disabled{opacity:.45}
+  .btn-wa{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;width:100%;
+    border-radius:10px;padding:11px;font-weight:700;font-size:14px;background:#1fa855;color:#fff;text-decoration:none}
+  .btn-wa.reenviar{background:#fff;color:#1a8d47;border:2px solid #1fa855}
+  .tag.wa{background:#e3f6ea;color:#1a8d47}
+  .sin-cel{font-size:13px;color:var(--suave);margin-top:8px}
   .pie-rep{font-size:13px;color:var(--suave);text-align:center;margin:6px 0 0}
   #barraReporte{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--borde);
     padding:10px 14px max(10px,env(safe-area-inset-bottom));z-index:10}
@@ -299,7 +304,7 @@
 
 <script>
 /* 👉 Pega aquí la URL /exec de Apps Script */
-const API_URL = 'https://script.google.com/macros/s/AKfycbwvTejexc9EMKdAuHjquC7h8Rvc485IW5NVGvuVqKSnD1IIgxFbb67VW-grLLqfC8IMPQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxVFIeZspYP0tkC5LNULkMA3T1i0xo3RruqeIUTSVST79DQgYfPFaPQCXaJw1_md5BuNg/exec';
 const DOMINIO = '@colegioproyecto.com';
 
 const $ = (id) => document.getElementById(id);
@@ -747,7 +752,7 @@ const rep = {
 $('incluirAnt').checked = rep.incluirAnteriores;
 
 const ESTADOS = {
-  pendiente: '🟡 Pendiente', enviado: '✅ Enviado', sinCorreo: '⚪ Sin correo', nada: '— No se envía'
+  pendiente: '🟡 Pendiente', enviado: '✅ Enviado', sinCorreo: '⚪ Sin correo', nada: '🚫 Todo excluido'
 };
 
 function esTutor() {
@@ -900,7 +905,7 @@ function tarjetaAlumno(a) {
   nom.append(b, sp);
   const cu = document.createElement('span');
   cu.className = 'cuentas';
-  cu.textContent = '🌟 ' + logros + ' · 📌 ' + mejorar;
+  cu.textContent = '🌟 ' + logros + ' · 📌 ' + mejorar + (a.whatsapp && !a.whatsapp.pendientes ? ' · 💬✓' : '');
   const es = document.createElement('span');
   es.className = 'estado ' + a.estado;
   es.textContent = ESTADOS[a.estado] || a.estado;
@@ -922,7 +927,8 @@ function tarjetaAlumno(a) {
     const t = document.createElement('div');
     t.textContent = (r.tipo === 'Logro' ? '🌟 ' : r.gravedad === 'Grave' ? '🔴 ' : '📌 ') + r.incidente;
     if (r.anterior) { const g = document.createElement('span'); g.className = 'tag ant'; g.textContent = 'semana anterior'; t.appendChild(g); }
-    if (r.enviado) { const g = document.createElement('span'); g.className = 'tag env'; g.textContent = 'enviado ' + r.enviado; t.appendChild(g); }
+    if (r.enviado) { const g = document.createElement('span'); g.className = 'tag env'; g.textContent = '📧 ' + r.enviado; t.appendChild(g); }
+    if (r.whatsapp) { const g = document.createElement('span'); g.className = 'tag wa'; g.textContent = '💬 ' + r.whatsapp; t.appendChild(g); }
     const sm = document.createElement('small');
     sm.textContent = r.dia + ' ' + r.hora + ' · ' + r.curso + ' · ' + r.docente;
     info.append(t, sm);
@@ -959,8 +965,38 @@ function tarjetaAlumno(a) {
     acc.append(bv, be);
     det.appendChild(acc);
   }
+
+  // WhatsApp: se abre en el celular del tutor con el mensaje ya escrito
+  if (a.whatsapp) {
+    const w = a.whatsapp;
+    const link = document.createElement('a');
+    const reenviar = !w.pendientes;
+    link.className = 'btn-wa' + (reenviar ? ' reenviar' : '');
+    link.href = 'https://wa.me/' + w.celular + '?text=' + encodeURIComponent(w.texto);
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = (reenviar ? '💬 Reenviar WhatsApp a ' : '💬 Enviar WhatsApp a ') + w.para +
+      (w.ultimo ? ' (último: ' + w.ultimo + ')' : '');
+    link.onclick = () => marcarWhatsApp(w.ids);
+    det.appendChild(link);
+  } else if (a.enLista && a.estado !== 'nada') {
+    const sc = document.createElement('div');
+    sc.className = 'sin-cel';
+    sc.textContent = '💬 Sin celular de los padres. Complétalo desde Fichas.';
+    det.appendChild(sc);
+  }
   caja.appendChild(det);
   return caja;
+}
+
+// Se registra al abrir WhatsApp (el envío final lo hace el tutor en su celular)
+async function marcarWhatsApp(ids) {
+  try {
+    await api('marcarWhatsApp', { seccion: rep.seccion, ids });
+    setTimeout(cargarReporte, 1500);
+  } catch (e) {
+    if (e.message !== 'sesion') aviso('No se pudo registrar el envío por WhatsApp: ' + e.message, true);
+  }
 }
 
 async function cambiarNoEnviar(r, valor, boton) {
