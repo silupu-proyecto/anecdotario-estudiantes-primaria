@@ -40,7 +40,10 @@
   .quien{flex:1;min-width:0}
   .quien b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .quien span{font-size:13px;opacity:.85}
-  #btnSalir{background:transparent;border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px}
+  #btnSalir,#btnActualizar{background:transparent;border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px}
+  #btnActualizar{font-size:16px;line-height:1;padding:5px 9px}
+  #btnActualizar.girando{animation:girar 1s linear infinite}
+  @keyframes girar{to{transform:rotate(360deg)}}
 
   main{max-width:760px;margin:0 auto;padding:14px 14px 120px}
   .tarjeta{background:var(--tarjeta);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
@@ -204,6 +207,7 @@
   <header>
     <img src="logo.png" alt="">
     <div class="quien"><b id="nombreDocente">—</b><span id="cursoDocente"></span></div>
+    <button id="btnActualizar" title="Traer cambios del Sheets" aria-label="Actualizar">🔄</button>
     <button id="btnSalir">Salir</button>
   </header>
   <nav id="vistas" class="oculto">
@@ -430,25 +434,36 @@ async function iniciar() {
   await sincronizar();
 }
 
-async function sincronizar() {
+async function sincronizar(manual) {
   const cache = leerCache();
+  $('btnActualizar').classList.add('girando');
   try {
     const res = await api('datos', { version: cache && cache.version });
     ultimaSync = Date.now();
-    if (res.sinCambios) return;
+    if (res.sinCambios) {
+      if (manual) aviso('✅ Todo al día, no hay cambios');
+      return;
+    }
     guardarCache(res.version, res.datos);
     const yaSeMostraba = !!estado.docente;
     aplicarDatos(res.datos, yaSeMostraba);
     if (yaSeMostraba) aviso('🔄 Lista actualizada');
   } catch (e) {
     if (e.message === 'sesion') return;
-    // Sin internet pero con datos guardados: se sigue trabajando con lo que hay
+    const msg = e.message === 'Failed to fetch' ? 'No se pudo conectar con el Sheets' : e.message;
     if (!estado.docente) {
-      $('cargando').textContent = e.message === 'Failed to fetch'
-        ? '❌ Sin conexión. Revisa tu internet y recarga la página.' : '❌ ' + e.message;
+      $('cargando').textContent = '❌ ' + msg + '. Revisa tu internet y recarga la página.';
+    } else {
+      // Con datos guardados se sigue trabajando, pero se avisa que pueden estar desactualizados
+      aviso('⚠️ ' + msg + '. La lista puede no estar actualizada.', true);
     }
+  } finally {
+    $('btnActualizar').classList.remove('girando');
+    if (manual && estado.vista === 'reporte' && typeof cargarReporte === 'function') cargarReporte(true);
   }
 }
+
+$('btnActualizar').onclick = () => sincronizar(true);
 
 function aplicarDatos(d, conservar) {
   estado.docente = d.docente;
@@ -747,7 +762,9 @@ async function borrarRegistro(r, boton) {
 
 const rep = {
   seccion: null, semana: null, datos: null, filtro: 'todos', abiertos: new Set(),
-  incluirAnteriores: leerLocal('anec_incluirAnt') === '1', cargando: false, enviando: false
+  incluirAnteriores: leerLocal('anec_incluirAnt') === '1', cargando: false, enviando: false,
+  guardando: new Set(), // anotaciones cuyo "No enviar" se está guardando
+  cambiosEnCurso: 0
 };
 $('incluirAnt').checked = rep.incluirAnteriores;
 
@@ -816,23 +833,36 @@ $('incluirAnt').onchange = () => {
 };
 $('repBuscar').oninput = pintarReporte;
 
-async function cargarReporte() {
+// silencioso = true: actualiza por detrás sin "Cargando…", sin mover el scroll ni cerrar tarjetas
+async function cargarReporte(silencioso) {
   const pedido = rep.seccion + '|' + rep.semana + '|' + rep.incluirAnteriores;
+  if (silencioso && (!rep.datos || rep.cambiosEnCurso > 0)) return;
   rep.cargando = pedido;
-  $('repLista').innerHTML = '<p class="vacio">Cargando…</p>';
-  $('repFiltros').innerHTML = '';
-  $('btnEnviarTodos').disabled = true;
+  if (!silencioso) {
+    $('repLista').innerHTML = '<p class="vacio">Cargando…</p>';
+    $('repFiltros').innerHTML = '';
+    $('btnEnviarTodos').disabled = true;
+  }
   try {
     const res = await api('reporte', { seccion: rep.seccion, semana: rep.semana, incluirAnteriores: rep.incluirAnteriores });
     if (rep.cargando !== pedido) return; // llegó tarde una respuesta vieja
+    // Si mientras tanto el tutor tachó algo, no se pisa su cambio: se espera a que termine
+    if (silencioso && rep.cambiosEnCurso > 0) return;
     rep.datos = res;
     rep.semana = res.semana.lunes;
-    pintarReporte();
+    pintarReporte(silencioso);
   } catch (e) {
-    if (e.message !== 'sesion') $('repLista').innerHTML = '<p class="vacio">❌ ' + e.message + '</p>';
+    if (e.message !== 'sesion' && !silencioso) $('repLista').innerHTML = '<p class="vacio">❌ ' + e.message + '</p>';
   } finally {
     if (rep.cargando === pedido) rep.cargando = false;
   }
+}
+
+// Mismo criterio que el servidor (estadoDe_ en Reportes.gs)
+function estadoLocal(a) {
+  const pendientes = a.registros.filter((r) => !r.noEnviar && !r.enviado).length;
+  if (!pendientes) return a.registros.some((r) => r.enviado) ? 'enviado' : 'nada';
+  return a.correos.length ? 'pendiente' : 'sinCorreo';
 }
 
 function contar(alumnos) {
@@ -841,9 +871,10 @@ function contar(alumnos) {
   return c;
 }
 
-function pintarReporte() {
+function pintarReporte(conservarScroll) {
   const d = rep.datos;
   if (!d) return;
+  const y = window.scrollY;
   const sem = d.semana;
   $('semTxt').textContent = 'Semana del ' + sem.etiqueta;
   $('semSub').textContent = rep.seccion + (sem.esActual ? ' · semana actual' : '');
@@ -884,8 +915,9 @@ function pintarReporte() {
   $('repResumen').textContent = c.pendiente
     ? c.pendiente + ' pendiente(s)' + (c.sinCorreo ? ' · ' + c.sinCorreo + ' sin correo' : '')
     : (c.todos ? 'Nada pendiente por enviar' : '');
-  $('btnEnviarTodos').disabled = !c.pendiente || rep.enviando;
+  $('btnEnviarTodos').disabled = !c.pendiente || rep.enviando || rep.cambiosEnCurso > 0;
   $('btnEnviarTodos').textContent = rep.enviando ? 'Enviando…' : 'Enviar pendientes (' + c.pendiente + ')';
+  if (conservarScroll) window.scrollTo(0, y);
 }
 
 function tarjetaAlumno(a) {
@@ -938,7 +970,8 @@ function tarjetaAlumno(a) {
       const x = document.createElement('button');
       x.className = 'btn-mini';
       x.textContent = r.noEnviar ? 'Incluir' : 'No enviar';
-      x.onclick = () => cambiarNoEnviar(r, !r.noEnviar, x);
+      x.disabled = rep.guardando.has(r.id);
+      x.onclick = () => cambiarNoEnviar(a, r);
       fila.appendChild(x);
     }
     det.appendChild(fila);
@@ -993,20 +1026,38 @@ function tarjetaAlumno(a) {
 async function marcarWhatsApp(ids) {
   try {
     await api('marcarWhatsApp', { seccion: rep.seccion, ids });
-    setTimeout(cargarReporte, 1500);
+    setTimeout(() => cargarReporte(true), 1500);
   } catch (e) {
     if (e.message !== 'sesion') aviso('No se pudo registrar el envío por WhatsApp: ' + e.message, true);
   }
 }
 
-async function cambiarNoEnviar(r, valor, boton) {
-  boton.disabled = true;
+// Actualización optimista: se tacha al instante y se guarda por detrás
+async function cambiarNoEnviar(a, r) {
+  if (rep.guardando.has(r.id)) return;
+  const valor = !r.noEnviar;
+  const aplicar = (v) => {
+    r.noEnviar = v;
+    a.estado = estadoLocal(a);
+    // El texto de WhatsApp se recalcula en el servidor; mientras tanto se oculta si ya no queda nada
+    if (a.whatsapp && !a.registros.some((x) => !x.noEnviar)) a.whatsapp = null;
+    pintarReporte(true);
+  };
+
+  rep.guardando.add(r.id);
+  rep.cambiosEnCurso++;
+  aplicar(valor);
   try {
     await api('noEnviar', { seccion: rep.seccion, id: r.id, valor });
-    await cargarReporte();
   } catch (e) {
-    boton.disabled = false;
-    if (e.message !== 'sesion') aviso('❌ ' + e.message, true);
+    aplicar(!valor); // se revierte
+    if (e.message !== 'sesion') aviso('❌ No se pudo guardar: ' + e.message, true);
+  } finally {
+    rep.guardando.delete(r.id);
+    rep.cambiosEnCurso--;
+    pintarReporte(true);
+    // Cuando terminan todos los cambios, se sincroniza en silencio (actualiza el texto de WhatsApp)
+    if (rep.cambiosEnCurso === 0) cargarReporte(true);
   }
 }
 
@@ -1079,7 +1130,7 @@ async function enviar(ids, reenviar) {
     }
   } finally {
     rep.enviando = false;
-    cargarReporte();
+    cargarReporte(true);
   }
 }
 
