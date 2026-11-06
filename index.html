@@ -33,7 +33,9 @@
   #msgLogin{margin-top:12px;color:var(--rojo);font-size:14px;min-height:1em}
 
   /* Encabezado */
-  header{position:sticky;top:0;z-index:10;background:var(--azul);color:#fff;
+  /* Encabezado + pestañas fijados juntos como un solo bloque */
+  .cabecera{position:sticky;top:0;z-index:10;background:var(--azul)}
+  header{background:var(--azul);color:#fff;
     padding:10px 16px;display:flex;align-items:center;gap:12px;
     padding-top:max(10px,env(safe-area-inset-top))}
   header img{width:36px;height:36px;object-fit:contain;background:#fff;border-radius:50%;padding:3px}
@@ -110,7 +112,7 @@
   #cargando{text-align:center;color:var(--suave);padding:20px}
 
   /* Pestañas de vista (solo tutores) */
-  #vistas{position:sticky;top:56px;z-index:9;background:var(--azul);display:flex;gap:4px;padding:0 12px 8px}
+  #vistas{background:var(--azul);display:flex;gap:4px;padding:0 12px 8px}
   #vistas button{flex:1;max-width:220px;border:0;border-radius:10px;padding:8px;font-weight:700;font-size:14px;
     background:rgba(255,255,255,.12);color:#fff}
   #vistas button.activo{background:#fff;color:var(--azul)}
@@ -201,6 +203,7 @@
 
 <!-- Aplicación -->
 <div id="app" class="oculto">
+  <div class="cabecera">
   <header>
     <img src="logo.png" alt="">
     <div class="quien"><b id="nombreDocente">—</b><span id="cursoDocente"></span></div>
@@ -210,6 +213,7 @@
     <button data-vista="registrar" class="activo">✏️ Registrar</button>
     <button data-vista="reporte">📨 Reporte semanal</button>
   </nav>
+  </div>
 
   <main id="vistaRegistrar">
     <div id="cargando">Cargando…</div>
