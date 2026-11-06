@@ -40,10 +40,7 @@
   .quien{flex:1;min-width:0}
   .quien b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .quien span{font-size:13px;opacity:.85}
-  #btnSalir,#btnActualizar{background:transparent;border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px}
-  #btnActualizar{font-size:16px;line-height:1;padding:5px 9px}
-  #btnActualizar.girando{animation:girar 1s linear infinite}
-  @keyframes girar{to{transform:rotate(360deg)}}
+  #btnSalir{background:transparent;border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px}
 
   main{max-width:760px;margin:0 auto;padding:14px 14px 120px}
   .tarjeta{background:var(--tarjeta);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
@@ -207,7 +204,6 @@
   <header>
     <img src="logo.png" alt="">
     <div class="quien"><b id="nombreDocente">—</b><span id="cursoDocente"></span></div>
-    <button id="btnActualizar" title="Traer cambios del Sheets" aria-label="Actualizar">🔄</button>
     <button id="btnSalir">Salir</button>
   </header>
   <nav id="vistas" class="oculto">
@@ -436,7 +432,6 @@ async function iniciar() {
 
 async function sincronizar(manual) {
   const cache = leerCache();
-  $('btnActualizar').classList.add('girando');
   try {
     const res = await api('datos', { version: cache && cache.version });
     ultimaSync = Date.now();
@@ -458,12 +453,10 @@ async function sincronizar(manual) {
       aviso('⚠️ ' + msg + '. La lista puede no estar actualizada.', true);
     }
   } finally {
-    $('btnActualizar').classList.remove('girando');
     if (manual && estado.vista === 'reporte' && typeof cargarReporte === 'function') cargarReporte(true);
   }
 }
 
-$('btnActualizar').onclick = () => sincronizar(true);
 
 function aplicarDatos(d, conservar) {
   estado.docente = d.docente;
