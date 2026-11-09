@@ -2,7 +2,7 @@
 
 /* 👉 Pega aquí la URL /exec de Apps Script */
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbzuzNk_OitGzUi_hEgecs-az1ocSFylYTj-zjMOs-bZ7b8vO4Vr34H0xnb0fnPJeFlsiw/exec";
+  "https://script.google.com/macros/s/AKfycbxVFIeZspYP0tkC5LNULkMA3T1i0xo3RruqeIUTSVST79DQgYfPFaPQCXaJw1_md5BuNg/exec";
 const DOMINIO = "@colegioproyecto.com";
 
 const $ = (id) => document.getElementById(id);
